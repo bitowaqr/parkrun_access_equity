@@ -163,8 +163,8 @@ server <- function(input, output) {
                     fillColor = ~pal_dist(mn_dstn),
                     highlight = highlightOptions(
                       weight = 1,
-                      color = "white",
-                      opacity = 0.5,
+                      color = "cyan",
+                      opacity = 1,
                       bringToFront = FALSE,
                       sendToBack = TRUE),
                     popup = paste(data_select$name,"<br>",
@@ -182,8 +182,8 @@ server <- function(input, output) {
                     fillColor = ~pal_dens(pp_dnst),
                     highlight = highlightOptions(
                       weight = 1,
-                      color = "white",
-                      opacity = 0.5,
+                      color = "cyan",
+                      opacity = 1,
                       bringToFront = FALSE,
                       sendToBack = TRUE),
                     popup = paste(data_select$name,"<br>",
@@ -201,8 +201,8 @@ server <- function(input, output) {
                     fillColor = ~pal_imd_a(a),
                     highlight = highlightOptions(
                       weight = 1,
-                      color = "white",
-                      opacity = 0.5,
+                      color = "cyan",
+                      opacity = 1,
                       bringToFront = FALSE,
                       sendToBack = TRUE),
                     popup = paste(data_select$name,"<br>",
@@ -243,3 +243,4 @@ server <- function(input, output) {
   
 # Run the map
 shinyApp(ui = ui, server = server)
+
