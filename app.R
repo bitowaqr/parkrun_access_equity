@@ -17,18 +17,18 @@ vars1 <- c("Absolute" = "absolute","Relative (UNSTABLE!)" = "relative")
 ui <- fluidPage(
   
   # leaflet map init
-   leafletOutput("mymap", width = "100%", height = 750),
+   leafletOutput("mymap", width = "100%", height = 700),
    
    # user panel
    absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE, 
                  top = "auto", left = "auto", right = 0, bottom = 0,
-                 width = 300, height = "auto",
+                 width = 250, height = "auto",
                  # title
                  h4("parkrun, access, equity"),
                  # color scaling adjuster
                  selectInput("color", "Scaling", vars1),
                  # plot bivariate relationships
-                 plotOutput("p1_dist", height = 600)
+                 plotOutput("p1_dist", height = 500)
                  )
    ) # end of UI
    
