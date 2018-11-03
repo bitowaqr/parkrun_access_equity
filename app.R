@@ -1,11 +1,15 @@
 # parkrun, access, equity
 # version 1.0
 
-# load packages
-library(ggplot2)
-library(shiny)
-library(leaflet)
-library(cowplot)
+# install and/or load required packages
+install_n_load <- function(package){
+  for(i in 1:length(package)){
+    if(eval(parse(text=paste("require(",package[i],")")))==0) {
+      install.packages(package)}}
+  return (eval(parse(text=paste("require(",package,")"))))
+}
+required_packages<-c("ggplot2","cowplot","shiny","leaflet")
+install_n_load(required_packages)
 
 # load data
 centroid_lsoa = read.csv("./centroids.csv")
