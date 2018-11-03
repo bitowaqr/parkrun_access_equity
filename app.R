@@ -10,7 +10,7 @@ library(cowplot)
 # load data
 centroid_lsoa = read.csv("./centroids.csv")
 data = raster::shapefile("./data")
-marker = raster::shapefile("./marker")
+parkrun_marker = raster::shapefile("./marker")
 vars1 <- c("Absolute" = "absolute","Relative (UNSTABLE!)" = "relative")   
 
 # UI
