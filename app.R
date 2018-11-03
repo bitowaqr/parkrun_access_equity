@@ -1,11 +1,15 @@
 # parkrun, access, equity
+# Paul Schneider
+# October 2018
 # version 1.0
 
 # install and/or load required packages
 install_n_load <- function(package){
   for(i in 1:length(package)){
     if(eval(parse(text=paste("require(",package[i],")")))==0) {
-      install.packages(package)}}
+      install.packages(package)
+      }
+    }
   return (eval(parse(text=paste("require(",package,")"))))
 }
 required_packages<-c("ggplot2","cowplot","shiny","leaflet")
@@ -17,35 +21,36 @@ data = raster::shapefile("./data")
 parkrun_marker = raster::shapefile("./marker")
 vars1 <- c("Absolute" = "absolute","Relative (UNSTABLE!)" = "relative")   
 
-# UI
+# ##   User-interface   #  ### #### ### #  ### #### ### #  
 ui <- fluidPage(
   
-  # leaflet map init
-   leafletOutput("mymap", width = "100%", height = 700),
-   
-   # user panel
-   absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE, 
-                 top = "auto", left = "auto", right = 0, bottom = 0,
-                 width = 250, height = "auto",
-                 # title
-                 h4("parkrun, access, equity"),
-                 # color scaling adjuster
-                 selectInput("color", "Scaling", vars1),
-                 # plot bivariate relationships
-                 plotOutput("p1_dist", height = 500)
-                 )
-   ) # end of UI
+    sidebarPanel(
+      h4("parkrun, access, equity"),
+      # color scaling adjuster
+      selectInput("color", "Scaling", vars1),
+      # plot bivariate relationships
+      plotOutput("p1_dist", height = 400),
+      width = 3
+      ),
+    
+    mainPanel(
+      # leaflet map init
+      leafletOutput("mymap", height = "95vh",width = "100%"),
+      tags$div(id="ref",
+               'Schneider et al.',tags$em('parkrun, access, equity.'), '2018. Data and code available at:',tags$a(href="https://github.com/bitowaqr/parkrun_access_equity", "https://github.com/bitowaqr/parkrun_access_equity",target="_blank")),
+      width = 8
+      )
+    
+    )
    
 
 
 # ##   SERVER   #  ### #### ### #  ### #### ### #  
-
 server <- function(input, output) {
   
   # Define base-map
   output$mymap <- renderLeaflet({
     leaflet() %>%
-      addProviderTiles(providers$Stamen.Toner, group = "Toner Map") %>%
       addProviderTiles(providers$Stamen.Toner, group = "Toner Map") %>%
       addTiles(group = "OSM Map") %>%
       addProviderTiles("CartoDB.Positron",group= "Carto Map", options= providerTileOptions(opacity = 0.99)) %>%
@@ -55,7 +60,6 @@ server <- function(input, output) {
   
   # Plot bivariate relationships
   output$p1_dist <- renderPlot({
-    
     # plot for area within scope
     areasInBounds <- reactive({
       if (is.null(input$mymap_bounds)){return(data)}
@@ -70,10 +74,9 @@ server <- function(input, output) {
     })
     # data within scope
     plot_data = areasInBounds()@data
-    
-      # plot distance ~population density
-        p1 = ggplot(plot_data[sample(1:length(plot_data[,1]),
-                                      ifelse(length(plot_data[,1])>1000,1000,length(plot_data[,1]))),]) +
+    # plot distance ~population density
+    p1 = ggplot(plot_data[sample(1:length(plot_data[,1]),
+                                 ifelse(length(plot_data[,1])>1000,1000,length(plot_data[,1]))),]) +
           geom_point(aes(x=log(pp_dnst), y=mn_dstn)) +
           geom_smooth(aes(x=log(pp_dnst),y=mn_dstn),method='lm',formula=y~x) +
           xlab("Population Density (log)") +
@@ -81,9 +84,9 @@ server <- function(input, output) {
           ggtitle(paste( ifelse(length(plot_data[,1])>1000,1000,length(plot_data[,1])),
                   "sample data points"))
     
-        # plot distance ~ deprivation
-          p2 = ggplot(plot_data[sample(1:length(plot_data[,1]),
-                                  ifelse(length(plot_data[,1])>1000,1000,length(plot_data[,1]))),]) +
+    # plot distance ~ deprivation
+    p2 = ggplot(plot_data[sample(1:length(plot_data[,1]),
+                                 ifelse(length(plot_data[,1])>1000,1000,length(plot_data[,1]))),]) +
             geom_point(aes(x=a, y=mn_dstn)) +
             geom_smooth(aes(x=a,y=mn_dstn),method='lm',formula=y~x) +
             xlab("Deprivation Score") +
@@ -91,15 +94,15 @@ server <- function(input, output) {
             ggtitle(paste( ifelse(length(plot_data[,1])>1000,1000,length(plot_data[,1])),
                            "sample data points"))
           
-          # combine plots
-          p3 = cowplot::plot_grid(p1,p2,nrow=2)
-          return(p3)
+    # combine plots
+    p3 = cowplot::plot_grid(p1,p2,nrow=2)
+    
+    return(p3)
   })
   
   
   
   observe({
-    
     # Area within scope for relative colors
     areasInBounds <- reactive({
       if (is.null(input$mymap_bounds)){return(data)}
@@ -111,12 +114,10 @@ server <- function(input, output) {
                              data$lon >= lngRng[1] & data$lon <= lngRng[2]
       )
       return(subset.data)
-    })
-    
+      })
     # Relative or absolute scalang? 
-    colorBy <- input$color
-    if(colorBy=="absolute"){data_select = data}  
-    if(colorBy =="relative"){data_select = areasInBounds()}
+    if(input$color=="absolute"){data_select = data}  
+    if(input$color =="relative"){data_select = areasInBounds()}
      
     # Color palete functions
     q_dists = as.numeric(quantile(data_select$mn_dstn,probs = c(seq(0,1,by=0.2))))
@@ -130,19 +131,29 @@ server <- function(input, output) {
     
     
     # UPDATE BASE MAP
-      leafletProxy("mymap") %>%
-        
+    leafletProxy("mymap") %>%
         # clear everything if relative scaling selected
         clearShapes() %>%
         clearControls() %>%
-        
         # control layers (add/remove)
         addLayersControl(
-          baseGroups = c("Toner Map","OSM Map", "Carto Map"),
-          overlayGroups = c("Event", "Distance","IMD","Density"),
-          options = layersControlOptions(collapsed = T)
+          baseGroups = c("Carto Map","Toner Map","OSM Map"),
+          overlayGroups = c("Event","Distance","IMD","Density"),
+          options = layersControlOptions(collapsed = T,autoZIndex=T)
         ) %>%
-        
+      # ADD PARKRUN EVENT MARKERS
+      addCircleMarkers(
+        group = "Event",
+        data = parkrun_marker,
+        radius = 5,
+        fillColor = "blue",
+        stroke = FALSE, fillOpacity = 0.9,
+        popup = paste("Course:",parkrun_marker$Club,"<br>",
+                      "Established:", parkrun_marker$Estblsh,"<br>",
+                      "Age in years:", parkrun_marker$Age_yrs,"<br>",
+                      "Mean participants:", round(parkrun_marker$Mn_prtc),"<br>",
+                      "Mean volunteers:", round(parkrun_marker$Mn_vlnt),"<br>")
+      ) %>% 
         # ADD POLYGON LAYERS
         # layer 1
         addPolygons(data = data_select, group = "Distance",
@@ -154,10 +165,10 @@ server <- function(input, output) {
                       weight = 1,
                       color = "white",
                       opacity = 0.5,
-                      bringToFront = TRUE,
+                      bringToFront = FALSE,
                       sendToBack = TRUE),
                     popup = paste(data_select$name,"<br>",
-                                  "Event:", data_select$nrst_vn,"<br>",
+                                  "Nearest event:", data_select$nrst_vn,"<br>",
                                   "Distance: ",data_select$mn_dstn," km <br>",
                                   "SIMD score:", data_select$a,"<br>",
                                   "Pop density:", data_select$pp_dnst,"<br>",
@@ -173,10 +184,10 @@ server <- function(input, output) {
                       weight = 1,
                       color = "white",
                       opacity = 0.5,
-                      bringToFront = TRUE,
+                      bringToFront = FALSE,
                       sendToBack = TRUE),
                     popup = paste(data_select$name,"<br>",
-                                  "Event:", data_select$nrst_vn,"<br>",
+                                  "Nearest event:", data_select$nrst_vn,"<br>",
                                   "Distance: ",data_select$mn_dstn," km <br>",
                                   "SIMD score:", data_select$a,"<br>",
                                   "Pop density:", data_select$pp_dnst,"<br>",
@@ -192,10 +203,10 @@ server <- function(input, output) {
                       weight = 1,
                       color = "white",
                       opacity = 0.5,
-                      bringToFront = TRUE,
+                      bringToFront = FALSE,
                       sendToBack = TRUE),
                     popup = paste(data_select$name,"<br>",
-                                  "Event:", data_select$nrst_vn,"<br>",
+                                  "Nearest event:", data_select$nrst_vn,"<br>",
                                   "Distance: ",data_select$mn_dstn," km <br>",
                                   "SIMD score:", data_select$a,"<br>",
                                   "Pop density:", data_select$pp_dnst,"<br>",
@@ -218,26 +229,12 @@ server <- function(input, output) {
                   labFormat = labelFormat(
                     suffix  = "km")
         ) %>%
-        
-        # ADD PARKRUN EVENT MARKERS
-        addCircleMarkers(
-          group = "Event",
-          data = parkrun_marker,
-          radius = 5,
-          fillColor = "blue",
-          stroke = FALSE, fillOpacity = 0.9,
-          popup = paste("Course:",parkrun_marker$Club,"<br>",
-                        "Established:", parkrun_marker$Estblsh,"<br>",
-                        "Age in years:", parkrun_marker$Age_yrs,"<br>",
-                        "Mean participants:", round(parkrun_marker$Mn_prtc),"<br>",
-                        "Mean volunteers:", round(parkrun_marker$Mn_vlnt),"<br>")
-        ) %>% 
-        
         # hide groups after init
         hideGroup("IMD") %>% 
         hideGroup("Distance") %>% 
         hideGroup("Density")
-      
+    
+    
       }) # end of 'observe' 
   
   
@@ -246,4 +243,3 @@ server <- function(input, output) {
   
 # Run the map
 shinyApp(ui = ui, server = server)
-
