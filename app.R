@@ -223,10 +223,10 @@ server <- function(input, output) {
           fillColor = "blue",
           stroke = FALSE, fillOpacity = 0.9,
           popup = paste("Course:",parkrun_marker$Club,"<br>",
-                        "Established:", parkrun_marker$Established,"<br>",
-                        "Age in years:", parkrun_marker$Age_years,"<br>",
-                        "Mean participants:", round(parkrun_marker$Mean_participants),"<br>",
-                        "Mean volunteers:", round(parkrun_marker$Mean_volunteers),"<br>")
+                        "Established:", parkrun_marker$Estblsh,"<br>",
+                        "Age in years:", parkrun_marker$Age_yrs,"<br>",
+                        "Mean participants:", round(parkrun_marker$Mn_prtc),"<br>",
+                        "Mean volunteers:", round(parkrun_marker$Mn_vlnt),"<br>")
         ) %>% 
         
         # hide groups after init
