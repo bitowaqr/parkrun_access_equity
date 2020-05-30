@@ -1,28 +1,58 @@
-# parkrun, access, equity
+
+  <br> 
+
+#### Code and Data Repository for:
+
+### Multiple deprivation and geographic distance to community sport events — achieving equitable access to parkrun in England
+<br>
+
+Schneider PP$^{*,1}$, Smith RA$^{1}$, Bullas AM$^{2}$, Quirk H$^{1}$, Bayley T$^{1}$, Haake SSJ$^{3}$, Brennan A$^{1}$, Goyder E$^{1}$ 
+
+*$^{1}$School of Health and Related Research, University of Sheffield, Sheffield, UK.   
+$^{2}$The Centre for Sports Engineering Research, Sheffield Hallam University, Sheffield S9 3TU, UK.    
+$^{3}$Advanced Wellbeing Research Centre, Sheffield Hallam University, Sheffield, UK.*
+
+****
+
+### Re-run analysis 
+
+To run the analysis and reproduce the results of this study, run scripts `./src/src1_functions.R` to `./src/src4_analysis.R` (make sure all required packages, including `rgdal`,`rgeos`, and `sf` are installed and loaded properly). Our code is provided under a MIT license.
+
+****
+
+## Abstract
+
+### Objectives 
+
+To evaluate geographic access to free weekly outdoor physical activity events (“parkrun”) in England, with a particular focus on deprived communities, and to identify 200 locations for future events to maximize geographic access to parkrun.
 
 <br>
 
-  **– work in progress –**
+### Study design 
+
+This study is a cross-sectional ecological analysis of the socioeconomic disparities in geographic access to parkrun events in England at the end of 2018.
 
 <br>
 
-This repository contains R shiny code + geospatial data to map parkrun events and the distance to the nearest parkrun event, multiple deprivation scores, and population density on English LSOA. The code is provided under CC-BY license. The data were taken from the following sources:
+### Methods 
 
-Parkrun event info: 
-Parkrun UK. 2018. http://www.parkrun.org.uk/
+We combined geo-location data on all English Lower Layer Super Output Areas and parkrun events to calculate geodesic distances to the nearest event for over 32,000 communities in England. We use this measure of geographic access to summarise the relationship between access and socioeconomic deprivation, measured using the Index of Multiple Deprivation. We then used geographic coordinates of public green spaces in England to conduct a simple location-allocation analysis to identify 200 locations for future event locations that would maximize access.
 
-Deprivation scores: 
-Office for National Statistics. English indices of deprivation 2015. Official Statistics. 2015. Available at: https://www.gov.uk/government/statistics/english-indices-of-deprivation-2015 
+\bigskip
 
-Population size and density per LSOA: 
-Office for National Statistics. Lower layer Super Output Area population density (National Statistics). Mid-2015: SAPE20DT11: Revised. 2018. Available at: https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/lowersuperoutputareapopulationdensity 
+### Results 
 
+In England 69% of the population live within 5 km of one of the 465 parkrun events. There is a small negative correlation between distance and deprivation, indicating that access is slightly better in more socioeconomically deprived areas. Setting up an additional 200 events in optimal locations would improve access: the average distance to the nearest parkrun event would improve by 1.22 km, from 4.65 km to 3.43 km, and approximately 82% of the English population would live within 5 km of a parkrun event. 
 
-LSOA geospatial info: 
-Office for National Statistics. Lower Layer Super Output Area (LSOA) boundaries. Super generalized and clipped. 2016. Available at: https://borders.ukdataservice.ac.uk/easy_download_data.html?data=England_lsoa_2011
+<br>
 
-Questions & comments: bitowaqr@gmail.com 
+### Conclusions
 
+Over two thirds of the English population live within 5 km of a parkrun event, and contrary to our expectation, we find that geographic access is slightly better for those living in more deprived communities. Creating additional events may improve geographic access, but effective strategies will still be needed to increase engagement in new and existing events by those living in socioeconomically deprived areas. 
 
-![Distance to the nearest parkrun event around Sheffield](https://github.com/bitowaqr/parkrun_access_equity/raw/master/Untitled.png)
+****
 
+Contact: [Paul Schneider](mailto:p.schneider@sheffield.ac.uk), University of Sheffield, UK.
+
+  <br>
+  <br>
